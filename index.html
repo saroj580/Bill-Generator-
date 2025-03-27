@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bill Generator</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <h1>Bill Generator</h1>
+        </div>
+        <div class="theme-toggle">
+            <button id="theme-toggle-btn">
+                <i class="fas fa-moon"></i> Dark Mode
+            </button>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Saved Bills Section with Search -->
+        <section id="saved-bills-section" class="card hidden">
+            <h2>Saved Bills</h2>
+            <div class="search-bar">
+                <input type="text" id="search-input" placeholder="Search by Transaction ID or Buyer Name">
+                <button id="search-btn"><i class="fas fa-search"></i></button>
+            </div>
+            <div id="bills-list">
+                <!-- Saved bills will be displayed here -->
+            </div>
+            <button id="close-saved-bills" class="btn secondary">Close</button>
+        </section>
+
+        <div class="bill-generator-container">
+            <!-- Bill Form Section -->
+            <section class="card bill-form">
+                <h2>Bill Information</h2>
+                
+                <!-- Company Information -->
+                <div class="form-group">
+                    <h3>Company Details</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="company-name">Company Name</label>
+                            <input type="text" id="company-name" value="Your Company" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="company-address">Address</label>
+                            <input type="text" id="company-address" value="123 Business St" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="company-city">City/State/ZIP</label>
+                            <input type="text" id="company-city" value="City, State ZIP" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="company-phone">Phone</label>
+                            <input type="text" id="company-phone" value="(123) 456-7890" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="company-email">Email</label>
+                        <input type="email" id="company-email" value="info@yourcompany.com" class="form-control">
+                    </div>
+                </div>
+                
+                <!-- Buyer Details -->
+                <div class="form-group">
+                    <h3>Buyer Details</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="buyer-name">Name*</label>
+                            <input type="text" id="buyer-name" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="buyer-address">Address</label>
+                            <input type="text" id="buyer-address" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="buyer-contact">Phone</label>
+                            <input type="text" id="buyer-contact" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="buyer-email">Email</label>
+                            <input type="email" id="buyer-email" class="form-control">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Products -->
+                <div class="form-group">
+                    <h3>Products*</h3>
+                    <div id="products-container">
+                        <div class="product-row">
+                            <input type="text" placeholder="Product Name" class="product-name form-control" required>
+                            <input type="number" placeholder="Qty" value="1" min="1" class="product-quantity form-control" required>
+                            <input type="number" placeholder="Price" value="0" min="0" step="0.01" class="product-price form-control" required>
+                            <button class="remove-product-btn"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                    <button id="add-product-btn" class="btn secondary"><i class="fas fa-plus"></i> Add Product</button>
+                </div>
+                
+                <!-- Transaction Details -->
+                <div class="form-group">
+                    <h3>Transaction Details</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="transaction-id">Transaction ID</label>
+                            <input type="text" id="transaction-id" class="form-control" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="transaction-date">Date</label>
+                            <input type="date" id="transaction-date" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="payment-method">Payment Method</label>
+                        <select id="payment-method" class="form-control">
+                            <option value="Cash">Cash</option>
+                            <option value="Credit Card">Credit Card</option>
+                            <option value="Debit Card">Debit Card</option>
+                            <option value="UPI">UPI</option>
+                            <option value="Bank Transfer">Bank Transfer</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Form Buttons -->
+                <div class="button-group">
+                    <button id="save-bill-btn" class="btn"><i class="fas fa-save"></i> Save Bill</button>
+                    <button id="reset-form-btn" class="btn secondary"><i class="fas fa-redo"></i> Reset Form</button>
+                    <button id="view-saved-bills-btn" class="btn secondary"><i class="fas fa-list"></i> View Saved Bills</button>
+                </div>
+            </section>
+            
+            <!-- Bill Preview Section -->
+            <section class="card bill-preview">
+                <h2>Bill Preview</h2>
+                <div id="bill-preview-content">
+                    <div class="company-info">
+                        <h3 id="preview-company-name">Your Company</h3>
+                        <p id="preview-company-address">123 Business St</p>
+                        <p id="preview-company-city">City, State ZIP</p>
+                        <p id="preview-company-contact">(123) 456-7890 | info@yourcompany.com</p>
+                    </div>
+                    
+                    <div class="bill-header">
+                        <h3>Invoice #<span id="preview-transaction-id"></span></h3>
+                        <p>Date: <span id="preview-transaction-date"></span></p>
+                        <p>Payment Method: <span id="preview-payment-method">Cash</span></p>
+                        
+                        <div class="buyer-info">
+                            <h4>Bill To:</h4>
+                            <p id="preview-buyer-name"></p>
+                            <p id="preview-buyer-address"></p>
+                            <p id="preview-buyer-contact"></p>
+                            <p id="preview-buyer-email"></p>
+                        </div>
+                    </div>
+                    
+                    <div class="bill-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Quantity</th>
+                                    <th>Unit Price</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody id="preview-products">
+                                <!-- Product rows will be inserted here -->
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="3" class="text-right"><strong>Total Amount Due:</strong></td>
+                                    <td id="preview-total"><strong>$0.00</strong></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    
+                    <div class="bill-footer">
+                        <p>Thank you for your business!</p>
+                    </div>
+                </div>
+                
+                <div class="button-group">
+                    <button id="print-btn" class="btn"><i class="fas fa-print"></i> Print</button>
+                    <button id="download-pdf-btn" class="btn"><i class="fas fa-file-pdf"></i> Download PDF</button>
+                    <button id="download-csv-btn" class="btn secondary"><i class="fas fa-file-csv"></i> Download CSV</button>
+                    <button id="email-bill-btn" class="btn secondary"><i class="fas fa-envelope"></i> Email Bill</button>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Bill Generator. All rights reserved.</p>
+    </footer>
+
+    <!-- Email Modal -->
+    <div id="email-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Send Invoice via Email</h2>
+            <div class="form-group">
+                <label for="email-to">Recipient Email</label>
+                <input type="email" id="email-to" class="form-control" value="">
+            </div>
+            <div class="form-group">
+                <label for="email-subject">Subject</label>
+                <input type="text" id="email-subject" class="form-control" value="Your Invoice">
+            </div>
+            <div class="form-group">
+                <label for="email-message">Message</label>
+                <textarea id="email-message" class="form-control" rows="4">Please find attached your invoice. Thank you for your business.</textarea>
+            </div>
+            <div class="button-group">
+                <button id="send-email-btn" class="btn">Send Email</button>
+                <button class="close-modal-btn btn secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Print Template (hidden) -->
+    <div id="print-template" style="display: none;"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html> 
