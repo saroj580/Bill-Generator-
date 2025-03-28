@@ -88,4 +88,76 @@ document.addEventListener('DOMContentLoaded', () => {
             updateSavedBillsList();
         }
     }
+    // Load Theme Preference
+    function loadThemePreference() {
+        const darkMode = localStorage.getItem('darkMode') === 'enabled';
+        if (darkMode) {
+            document.body.classList.add('dark-mode');
+            themeToggleBtn.innerHTML = '<i class="fas fa-sun"></i> Light Mode';
+        }
+    }
+
+    // Set up event listeners
+    function setupEventListeners() {
+        // Theme Toggle
+        themeToggleBtn.addEventListener('click', toggleTheme);
+        
+        // Add Product Button
+        addProductBtn.addEventListener('click', addProductRow);
+        
+        // Setup initial remove product buttons
+        setupRemoveProductButtons();
+        
+        // Form Buttons
+        saveBillBtn.addEventListener('click', saveBill);
+        resetFormBtn.addEventListener('click', resetForm);
+        viewSavedBillsBtn.addEventListener('click', toggleSavedBillsView);
+        closeSavedBillsBtn.addEventListener('click', toggleSavedBillsView);
+        
+        // Bill Actions
+        printBtn.addEventListener('click', printBill);
+        downloadPdfBtn.addEventListener('click', downloadPdf);
+        downloadCsvBtn.addEventListener('click', downloadCsv);
+        emailBillBtn.addEventListener('click', openEmailModal);
+        
+        // Search
+        searchBtn.addEventListener('click', searchBills);
+        searchInput.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') {
+                searchBills();
+            }
+        });
+        
+        // Modal Close
+        closeModalBtns.forEach(btn => {
+            btn.addEventListener('click', closeModals);
+        });
+        
+        // Email Send
+        sendEmailBtn.addEventListener('click', sendEmail);
+        
+        // Company Info Changes
+        companyNameInput.addEventListener('input', updatePreview);
+        companyAddressInput.addEventListener('input', updatePreview);
+        companyCityInput.addEventListener('input', updatePreview);
+        companyPhoneInput.addEventListener('input', updatePreview);
+        companyEmailInput.addEventListener('input', updatePreview);
+        
+        // Buyer Info Changes
+        buyerNameInput.addEventListener('input', updatePreview);
+        buyerAddressInput.addEventListener('input', updatePreview);
+        buyerContactInput.addEventListener('input', updatePreview);
+        buyerEmailInput.addEventListener('input', updatePreview);
+        
+        // Transaction Details Changes
+        transactionDateInput.addEventListener('input', updatePreview);
+        paymentMethodSelect.addEventListener('change', updatePreview);
+        
+        // Window click to close modals
+        window.addEventListener('click', (e) => {
+            if (e.target === emailModal) {
+                closeModals();
+            }
+        });
+    }
 });
