@@ -228,4 +228,78 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Update Preview
+    function updatePreview() {
+        // Company Info
+        previewCompanyName.textContent = companyNameInput.value;
+        previewCompanyAddress.textContent = companyAddressInput.value;
+        previewCompanyCity.textContent = companyCityInput.value;
+        previewCompanyContact.textContent = `${companyPhoneInput.value} | ${companyEmailInput.value}`;
+        
+        // Transaction Details
+        previewTransactionId.textContent = transactionIdInput.value;
+        previewTransactionDate.textContent = formatDate(transactionDateInput.value);
+        previewPaymentMethod.textContent = paymentMethodSelect.value;
+        
+        // Buyer Info
+        previewBuyerName.textContent = buyerNameInput.value;
+        previewBuyerAddress.textContent = buyerAddressInput.value;
+        previewBuyerContact.textContent = buyerContactInput.value ? `Phone: ${buyerContactInput.value}` : '';
+        previewBuyerEmail.textContent = buyerEmailInput.value ? `Email: ${buyerEmailInput.value}` : '';
+        
+        // Products
+        updateProductsPreview();
+    }
+
+    // Update Products Preview
+    function updateProductsPreview() {
+        previewProducts.innerHTML = '';
+        
+        const products = getProductsData();
+        let total = 0;
+        
+        products.forEach(product => {
+            const row = document.createElement('tr');
+            const itemTotal = product.quantity * product.price;
+            total += itemTotal;
+            
+            row.innerHTML = `
+                <td>${product.name}</td>
+                <td>${product.quantity}</td>
+                <td>$${product.price.toFixed(2)}</td>
+                <td>$${itemTotal.toFixed(2)}</td>
+            `;
+            
+            previewProducts.appendChild(row);
+        });
+        
+        previewTotal.innerHTML = `<strong>$${total.toFixed(2)}</strong>`;
+    }
+
+    // Get Products Data
+    function getProductsData() {
+        const products = [];
+        const productRows = productsContainer.querySelectorAll('.product-row');
+        
+        productRows.forEach(row => {
+            const name = row.querySelector('.product-name').value;
+            const quantity = parseInt(row.querySelector('.product-quantity').value) || 0;
+            const price = parseFloat(row.querySelector('.product-price').value) || 0;
+            
+            products.push({
+                name,
+                quantity,
+                price
+            });
+        });
+        
+        return products;
+    }
+
+    // Calculate Total
+    function calculateTotal() {
+        const products = getProductsData();
+        return products.reduce((sum, product) => sum + (product.quantity * product.price), 0);
+    }
+
 });
