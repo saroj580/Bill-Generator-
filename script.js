@@ -160,4 +160,72 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    // Setup Remove Product Buttons
+    function setupRemoveProductButtons() {
+        const removeButtons = document.querySelectorAll('.remove-product-btn');
+        removeButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                const productRow = e.target.closest('.product-row');
+                if (productsContainer.children.length > 1) {
+                    productRow.remove();
+                    updatePreview();
+                } else {
+                    alert('You need at least one product!');
+                }
+            });
+        });
+    }
+
+    // Toggle Theme
+    function toggleTheme() {
+        const isDarkMode = document.body.classList.toggle('dark-mode');
+        
+        if (isDarkMode) {
+            themeToggleBtn.innerHTML = '<i class="fas fa-sun"></i> Light Mode';
+            localStorage.setItem('darkMode', 'enabled');
+        } else {
+            themeToggleBtn.innerHTML = '<i class="fas fa-moon"></i> Dark Mode';
+            localStorage.setItem('darkMode', null);
+        }
+    }
+
+    // Add Product Row
+    function addProductRow() {
+        const newRow = document.createElement('div');
+        newRow.className = 'product-row';
+        newRow.innerHTML = `
+            <input type="text" placeholder="Product Name" class="product-name form-control" required>
+            <input type="number" placeholder="Qty" value="1" min="1" class="product-quantity form-control" required>
+            <input type="number" placeholder="Price" value="0" min="0" step="0.01" class="product-price form-control" required>
+            <button class="remove-product-btn"><i class="fas fa-trash"></i></button>
+        `;
+        
+        productsContainer.appendChild(newRow);
+        
+        // Add event listeners to the new inputs
+        const nameInput = newRow.querySelector('.product-name');
+        const quantityInput = newRow.querySelector('.product-quantity');
+        const priceInput = newRow.querySelector('.product-price');
+        
+        nameInput.addEventListener('input', updatePreview);
+        quantityInput.addEventListener('input', updatePreview);
+        priceInput.addEventListener('input', updatePreview);
+        
+        // Setup remove button
+        setupRemoveProductButtons();
+    }
+
+    // Setup Live Preview
+    function setupLivePreview() {
+        // Initial update
+        updatePreview();
+        
+        // Listen for changes in product rows
+        const productInputs = productsContainer.querySelectorAll('input');
+        productInputs.forEach(input => {
+            input.addEventListener('input', updatePreview);
+        });
+    }
+
 });
