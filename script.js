@@ -302,4 +302,81 @@ document.addEventListener('DOMContentLoaded', () => {
         return products.reduce((sum, product) => sum + (product.quantity * product.price), 0);
     }
 
+    // Save Bill
+    function saveBill() {
+        // Validation
+        if (!validateForm()) {
+            return;
+        }
+        
+        const bill = {
+            id: transactionIdInput.value,
+            date: transactionDateInput.value,
+            company: {
+                name: companyNameInput.value,
+                address: companyAddressInput.value,
+                city: companyCityInput.value,
+                phone: companyPhoneInput.value,
+                email: companyEmailInput.value
+            },
+            buyer: {
+                name: buyerNameInput.value,
+                address: buyerAddressInput.value,
+                contact: buyerContactInput.value,
+                email: buyerEmailInput.value
+            },
+            products: getProductsData(),
+            paymentMethod: paymentMethodSelect.value,
+            total: calculateTotal()
+        };
+        
+        // Add to saved bills
+        savedBills.push(bill);
+        
+        // Save to localStorage
+        localStorage.setItem('savedBills', JSON.stringify(savedBills));
+        
+        // Update the bills list
+        updateSavedBillsList();
+        
+        // Show success message
+        alert('Bill saved successfully!');
+        
+        // Reset form
+        resetForm();
+    }
+
+    // Validate Form
+    function validateForm() {
+        // Check buyer name
+        if (!buyerNameInput.value.trim()) {
+            alert('Please enter the buyer\'s name');
+            buyerNameInput.focus();
+            return false;
+        }
+        
+        // Check products
+        const products = getProductsData();
+        let valid = true;
+        
+        products.forEach((product, index) => {
+            if (!product.name.trim()) {
+                alert(`Please enter a name for product ${index + 1}`);
+                valid = false;
+            }
+            
+            if (product.quantity <= 0) {
+                alert(`Please enter a valid quantity for product ${index + 1}`);
+                valid = false;
+            }
+            
+            if (product.price <= 0) {
+                alert(`Please enter a valid price for product ${index + 1}`);
+                valid = false;
+            }
+        });
+        
+        return valid;
+    }
+
 });
