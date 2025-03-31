@@ -379,4 +379,120 @@ document.addEventListener('DOMContentLoaded', () => {
         return valid;
     }
 
+    // Reset Form
+    function resetForm() {
+        // Don't reset company info
+        
+        // Reset buyer info
+        buyerNameInput.value = '';
+        buyerAddressInput.value = '';
+        buyerContactInput.value = '';
+        buyerEmailInput.value = '';
+        
+        // Reset products (keep one empty row)
+        productsContainer.innerHTML = `
+            <div class="product-row">
+                <input type="text" placeholder="Product Name" class="product-name form-control" required>
+                <input type="number" placeholder="Qty" value="1" min="1" class="product-quantity form-control" required>
+                <input type="number" placeholder="Price" value="0" min="0" step="0.01" class="product-price form-control" required>
+                <button class="remove-product-btn"><i class="fas fa-trash"></i></button>
+            </div>
+        `;
+        
+        // Reset transaction details
+        transactionIdInput.value = generateTransactionId();
+        transactionDateInput.value = new Date().toISOString().split('T')[0];
+        paymentMethodSelect.value = 'Cash';
+        
+        // Setup event listeners for the new product row
+        setupRemoveProductButtons();
+        setupLivePreview();
+    }
+
+    // Update Saved Bills List
+    function updateSavedBillsList() {
+        billsList.innerHTML = '';
+        
+        if (savedBills.length === 0) {
+            billsList.innerHTML = '<p>No saved bills found.</p>';
+            return;
+        }
+        
+        savedBills.forEach(bill => {
+            const billItem = document.createElement('div');
+            billItem.className = 'bill-item';
+            billItem.innerHTML = `
+                <div>
+                    <strong>${bill.id}</strong> | ${bill.buyer.name} | $${bill.total.toFixed(2)} | ${formatDate(bill.date)}
+                </div>
+                <div class="actions">
+                    <button class="btn" data-id="${bill.id}"><i class="fas fa-eye"></i> View</button>
+                    <button class="btn secondary" data-id="${bill.id}"><i class="fas fa-trash"></i> Delete</button>
+                </div>
+            `;
+            
+            billsList.appendChild(billItem);
+            
+            // Add event listeners to the buttons
+            const viewBtn = billItem.querySelector('.btn:not(.secondary)');
+            const deleteBtn = billItem.querySelector('.btn.secondary');
+            
+            viewBtn.addEventListener('click', () => loadBill(bill.id));
+            deleteBtn.addEventListener('click', () => deleteBill(bill.id));
+        });
+    }
+
+     // Load Bill
+    function loadBill(billId) {
+        const bill = savedBills.find(b => b.id === billId);
+        if (!bill) return;
+        
+        // Fill the form with the bill data
+        
+        // Company info
+        companyNameInput.value = bill.company.name;
+        companyAddressInput.value = bill.company.address;
+        companyCityInput.value = bill.company.city;
+        companyPhoneInput.value = bill.company.phone;
+        companyEmailInput.value = bill.company.email;
+        
+        // Buyer info
+        buyerNameInput.value = bill.buyer.name;
+        buyerAddressInput.value = bill.buyer.address;
+        buyerContactInput.value = bill.buyer.contact;
+        buyerEmailInput.value = bill.buyer.email;
+        
+        // Transaction details
+        transactionIdInput.value = bill.id;
+        transactionDateInput.value = bill.date;
+        paymentMethodSelect.value = bill.paymentMethod;
+        
+        // Products
+        productsContainer.innerHTML = '';
+        bill.products.forEach(product => {
+            const newRow = document.createElement('div');
+            newRow.className = 'product-row';
+            newRow.innerHTML = `
+                <input type="text" placeholder="Product Name" class="product-name form-control" value="${product.name}" required>
+                <input type="number" placeholder="Qty" value="${product.quantity}" min="1" class="product-quantity form-control" required>
+                <input type="number" placeholder="Price" value="${product.price}" min="0" step="0.01" class="product-price form-control" required>
+                <button class="remove-product-btn"><i class="fas fa-trash"></i></button>
+            `;
+            
+            productsContainer.appendChild(newRow);
+        });
+        
+        // Setup remove buttons and update preview
+        setupRemoveProductButtons();
+        setupLivePreview();
+        
+        // Hide saved bills view
+        savedBillsSection.classList.add('hidden');
+        
+        // Update email recipient
+        if (bill.buyer.email) {
+            emailToInput.value = bill.buyer.email;
+        }
+    }
+
 });
