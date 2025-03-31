@@ -489,10 +489,74 @@ document.addEventListener('DOMContentLoaded', () => {
         // Hide saved bills view
         savedBillsSection.classList.add('hidden');
         
-        // Update email recipient
         if (bill.buyer.email) {
             emailToInput.value = bill.buyer.email;
         }
+    }
+
+    // Delete Bill
+    function deleteBill(billId) {
+        if (confirm('Are you sure you want to delete this bill?')) {
+            const index = savedBills.findIndex(b => b.id === billId);
+            savedBills.splice(index, 1);
+            localStorage.setItem('savedBills', JSON.stringify(savedBills));
+            updateSavedBillsList();
+        }
+    }
+
+    // Toggle Saved Bills View
+    function toggleSavedBillsView() {
+        savedBillsSection.classList.toggle('hidden');
+        
+        // Clear search input when showing
+        if (!savedBillsSection.classList.contains('hidden')) {
+            searchInput.value = '';
+            updateSavedBillsList();
+        }
+    }
+
+    // Search Bills
+    function searchBills() {
+        const query = searchInput.value.toLowerCase();
+        
+        if (!query) {
+            updateSavedBillsList();
+            return;
+        }
+        
+        const filteredBills = savedBills.filter(bill => 
+            bill.id.toLowerCase().includes(query) ||
+            bill.buyer.name.toLowerCase().includes(query)
+        );
+        
+        billsList.innerHTML = '';
+        
+        if (filteredBills.length === 0) {
+            billsList.innerHTML = '<p>No matching bills found.</p>';
+            return;
+        }
+        
+        filteredBills.forEach(bill => {
+            const billItem = document.createElement('div');
+            billItem.className = 'bill-item';
+            billItem.innerHTML = `
+                <div>
+                    <strong>${bill.id}</strong> | ${bill.buyer.name} | $${bill.total.toFixed(2)} | ${formatDate(bill.date)}
+                </div>
+                <div class="actions">
+                    <button class="btn" data-id="${bill.id}"><i class="fas fa-eye"></i> View</button>
+                    <button class="btn secondary" data-id="${bill.id}"><i class="fas fa-trash"></i> Delete</button>
+                </div>
+            `;
+            
+            billsList.appendChild(billItem);
+            
+            const viewBtn = billItem.querySelector('.btn:not(.secondary)');
+            const deleteBtn = billItem.querySelector('.btn.secondary');
+            
+            viewBtn.addEventListener('click', () => loadBill(bill.id));
+            deleteBtn.addEventListener('click', () => deleteBill(bill.id));
+        });
     }
 
 });
