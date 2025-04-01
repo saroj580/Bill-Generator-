@@ -559,4 +559,88 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Print Bill
+    function printBill() {
+        // Create print template
+        preparePrintTemplate();
+        
+        // Print
+        window.print();
+    }
+
+    // Prepare Print Template
+    function preparePrintTemplate() {
+        // No need to create a separate template as we'll use the CSS print media queries
+    }
+
+    // Download PDF
+    function downloadPdf() {
+        // Validation
+        if (!validateForm()) {
+            return;
+        }
+        
+        try {
+            const doc = new jsPDF();
+            
+            // Company Info
+            doc.setFontSize(20);
+            doc.text(companyNameInput.value, 105, 20, { align: 'center' });
+            doc.setFontSize(10);
+            doc.text(companyAddressInput.value, 105, 25, { align: 'center' });
+            doc.text(`${companyCityInput.value} | ${companyPhoneInput.value}`, 105, 30, { align: 'center' });
+            doc.text(companyEmailInput.value, 105, 35, { align: 'center' });
+            
+            doc.setFontSize(16);
+            doc.text('INVOICE', 105, 45, { align: 'center' });
+            
+            // Buyer Details
+            doc.setFontSize(10);
+            doc.text('Bill To:', 15, 55);
+            doc.setFontSize(11);
+            doc.text(buyerNameInput.value, 15, 60);
+            doc.setFontSize(10);
+            doc.text(buyerAddressInput.value, 15, 65);
+            doc.text(`Phone: ${buyerContactInput.value}`, 15, 70);
+            doc.text(`Email: ${buyerEmailInput.value}`, 15, 75);
+            
+            // Transaction Details
+            doc.text(`Invoice #: ${transactionIdInput.value}`, 140, 60);
+            doc.text(`Date: ${formatDate(transactionDateInput.value)}`, 140, 65);
+            doc.text(`Payment Method: ${paymentMethodSelect.value}`, 140, 70);
+            
+            // Product Table
+            const products = getProductsData();
+            const tableColumn = ["Product", "Quantity", "Unit Price", "Total"];
+            const tableRows = products.map(product => [
+                product.name,
+                product.quantity,
+                `$${product.price.toFixed(2)}`,
+                `$${(product.quantity * product.price).toFixed(2)}`
+            ]);
+            
+            doc.autoTable({
+                startY: 85,
+                head: [tableColumn],
+                body: tableRows,
+                theme: 'grid',
+                headStyles: { fillColor: [52, 152, 219], textColor: 255 },
+                styles: { fontSize: 10 }
+            });
+            
+            // Total
+            const total = calculateTotal();
+            const finalY = doc.lastAutoTable.finalY + 10;
+            doc.text(`Total Amount Due: $${total.toFixed(2)}`, 140, finalY);
+            
+            // Footer
+            doc.setFontSize(10);
+            doc.text('Thank you for your business!', 105, finalY + 20, { align: 'center' });
+            
+            doc.save(`Invoice_${transactionIdInput.value}.pdf`);
+        } catch (error) {
+            console.error('Error generating PDF:', error);
+            alert('Error generating PDF. Please try again.');
+        }
+    }
 });
