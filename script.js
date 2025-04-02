@@ -661,6 +661,45 @@ document.addEventListener('DOMContentLoaded', () => {
             (product.quantity * product.price).toFixed(2)
         ]);
 
+        const total = calculateTotal();
+        rows.push(['', '', 'Total', total.toFixed(2)]);
         
+        let csvContent = [
+            headers.join(','),
+            ...rows.map(row => row.join(','))
+        ].join('\n');
+        
+        // Create blob and download
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.setAttribute('href', url);
+        link.setAttribute('download', `Invoice_${transactionIdInput.value}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+    }
+
+    // Open Email Modal
+    function openEmailModal() {
+        // Validation
+        if (!validateForm()) {
+            return;
+        }
+        
+        // Pre-fill recipient email if available
+        if (buyerEmailInput.value) {
+            emailToInput.value = buyerEmailInput.value;
+        }
+        
+        // Show modal
+        emailModal.style.display = 'block';
+    }
+
+    // Close Modals
+    function closeModals() {
+        emailModal.style.display = 'none';
     }
 });
