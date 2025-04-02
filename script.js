@@ -702,4 +702,35 @@ document.addEventListener('DOMContentLoaded', () => {
     function closeModals() {
         emailModal.style.display = 'none';
     }
+    // Send Email
+    function sendEmail() {
+        const recipient = emailToInput.value;
+        const subject = document.getElementById('email-subject').value;
+        const message = document.getElementById('email-message').value;
+        
+        if (!recipient) {
+            alert('Please enter a recipient email address');
+            return;
+        }
+        
+        // In a real application, you would send the email via a server-side API
+        // This is a simulated email sending
+        
+        alert(`Email would be sent to ${recipient} with the invoice attached.`);
+        closeModals();
+        
+        // In a real implementation:
+        // 1. Generate PDF/CSV data
+        // 2. Send to server-side API
+        // 3. Server sends the email with attachment
+    }
+
+    // Format Date
+    function formatDate(dateString) {
+        if (!dateString) return '';
+        
+        const date = new Date(dateString);
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        return date.toLocaleDateString(undefined, options);
+    }
 });
