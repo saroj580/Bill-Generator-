@@ -643,4 +643,24 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Error generating PDF. Please try again.');
         }
     }
+
+     // Download CSV
+    function downloadCsv() {
+        // Validation
+        if (!validateForm()) {
+            return;
+        }
+        
+        const products = getProductsData();
+        const headers = ['Product', 'Quantity', 'Unit Price', 'Total'];
+        
+        const rows = products.map(product => [
+            product.name,
+            product.quantity,
+            product.price.toFixed(2),
+            (product.quantity * product.price).toFixed(2)
+        ]);
+
+        
+    }
 });
